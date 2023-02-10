@@ -20,18 +20,17 @@ void printMap(char map[N][N]) {
     }
 }
 
-//void findLongShip(int a) {
-//    cout << a << endl;
-//}
 
 void checkShips(char map[N][N]) {
     int isCorrect = true;
-    //int temp_a = 0;//лево
-    //int temp_b = 0;//вверх
-    //int temp_c = 0;//право
-    //int temp_d = 0;//низ
+    int t = 0;
+    int temp_a = 0;//лево
+    int temp_b = 0;//вверх
+    int temp_c = 0;//право
+    int temp_d = 0;//низ
     for (int i = 0; i < N; i++)
     {
+        t = 0;
         for (int j = 0; j < N; j++)
         {                        
             if (map[i][j] == '*') {// на диагоналях
@@ -54,25 +53,41 @@ void checkShips(char map[N][N]) {
                     cout << "Error!!! upper left diagonal" << endl;
                     isCorrect = false;
                     return;
-                }     
-                //   // сверху, снизу, слева, справа
-                //if (map[i][j + 1] == '*') {
-                //    temp_a = map[i][j + 1];//лево
-                //    findLongShip(temp_a);
-                //}
-                //else if (map[i][j - 1] == '*') {
-                //    temp_b = map[i][j - 1];//вверх
-                //    findLongShip(temp_b);
-                //}
-                //else if (map[i + 1][j] == '*') {
-                //    temp_c = map[i + 1][j];//право
-                //    //cout << "right" << endl;
-                //    findLongShip(map[i + 1][j]);
-                //}
-                //else if (map[i - 1][j] == '*') {
-                //    temp_d = map[i + 1][j + 1];//низ
-                //    findLongShip(temp_d);
-                //}                                              
+                }
+                // сверху, снизу, слева, справа
+
+                if (map[i + 1][j] == '*' &&
+                    map[i + 2][j] == '*' &&
+                    map[i + 3][j] == '*' &&
+                    map[i + 4][j] == '*') {
+                    cout << "Eror!!! lower, the ship is too long" << endl;   
+                    isCorrect = false;
+                    return;
+                }
+                else if (map[i][j - 1] == '*' &&
+                    map[i][j - 2] == '*' &&
+                    map[i][j - 3] == '*' &&
+                    map[i][j - 4] == '*') {
+                    cout << "Eror!!! left, the ship is too long" << endl;
+                    isCorrect = false;
+                    return;
+                }
+                else if (map[i - 1][j] == '*' &&
+                    map[i - 2][j] == '*'&&
+                    map[i - 3][j] == '*'&&
+                    map[i - 4][j] == '*') {
+                    cout << "Eror!!! upper, the ship is too long" << endl;
+                    isCorrect = false;
+                    return;
+                }
+                else if (map[i][j + 1] == '*' &&
+                    map[i][j + 2] == '*' &&
+                    map[i][j + 3] == '*' &&
+                    map[i][j + 4] == '*') {
+                    cout << "Eror!!! right, the ship is too long" << endl;
+                    isCorrect = false;
+                    return;
+                }
             }         
         }
     }
@@ -132,9 +147,10 @@ int main()
         }
         in.close();
     }   
+
     printMap(map);
     checkShips(map);
-    gotOrNotGot(map);  
+    gotOrNotGot(map); 
     return 0;
 }
 
