@@ -19,18 +19,10 @@ void printMap(char map[N][N]) {
         cout << endl;
     }
 }
-
-
 void checkShips(char map[N][N]) {
     int isCorrect = true;
-    int t = 0;
-    int temp_a = 0;//лево
-    int temp_b = 0;//вверх
-    int temp_c = 0;//право
-    int temp_d = 0;//низ
     for (int i = 0; i < N; i++)
     {
-        t = 0;
         for (int j = 0; j < N; j++)
         {                        
             if (map[i][j] == '*') {// на диагоналях
