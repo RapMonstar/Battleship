@@ -1,5 +1,6 @@
 ﻿#include <iostream>
 #include <fstream>
+#include <queue>
 
 
 using std::cout;
@@ -19,8 +20,55 @@ void printMap(char map[N][N]) {
         cout << endl;
     }
 }
+int confirm_ship(char map[N][N], bool(&checked_ps)[N][N], int x, int y) {
+    struct cords
+    {
+        int x;
+        int y;
+    };
+    enum Directions {
+        undef,
+        vertical,
+        horizontal
+    };
+    std::queue<cords> go_ls;
+    go_ls.push({ x, y });
+
+    int res = 0;
+    Directions direction = Directions::undef;
+    while (!go_ls.empty()) {
+        cords cur_pt = go_ls.front();
+        go_ls.pop();
+        checked_ps[cur_pt.x][cur_pt.y] = true;
+        res++;
+
+        if (cur_pt.x < N - 1)
+            if (!checked_ps[cur_pt.x + 1][cur_pt.y]
+                && map[cur_pt.x + 1][cur_pt.y] == '*'
+                && (direction == Directions::undef || direction == Directions::horizontal))
+            {
+                go_ls.push({ cur_pt.x + 1, cur_pt.y });
+                direction = Directions::horizontal;
+            }
+
+        if (cur_pt.y < N - 1)
+            if (!checked_ps[cur_pt.x][cur_pt.y + 1]
+                && map[cur_pt.x][cur_pt.y + 1] == '*'
+                && (direction == Directions::undef || direction == Directions::vertical))
+            {
+                go_ls.push({ cur_pt.x, cur_pt.y + 1 });
+                direction = Directions::vertical;
+            }
+    }
+    return res;
+}
 void checkShips(char map[N][N]) {
     int isCorrect = true;
+    int one4deckship = 0;
+    int one3deckship = 0;
+    int one2deckship = 0;
+    int one1deckship = 0;
+
     for (int i = 0; i < N; i++)
     {
         for (int j = 0; j < N; j++)
@@ -80,22 +128,58 @@ void checkShips(char map[N][N]) {
                     isCorrect = false;
                     return;
                 }
-            }         
+            }
+        }
+    } 
+    bool checked_ps[N][N];
+    for (size_t i = 0; i < N; i++)
+    {
+        for (size_t j = 0; j < N; j++)
+        {
+            checked_ps[i][j] = false;
         }
     }
+
+    for (size_t i = 0; i < N; i++)
+    {
+        for (size_t j = 0; j < N; j++)
+        {
+            if (map[i][j] == '*' && checked_ps[i][j] == false) {
+                int res = confirm_ship(map, checked_ps, i, j);
+                if (res == 1) one1deckship++;
+                if (res == 2) one2deckship++;
+                if (res == 3) one3deckship++;
+                if (res == 4) one4deckship++;
+            }
+        }
+    }//1 четырехпалубный корабль, 2 трехпалубных, 3 двухпалубных, 4 однопалубных
+
+    if (one4deckship != 1 || one3deckship != 2 || one2deckship != 3 || one1deckship != 4)
+    {
+        cout << "Error!!! you need 1 - 4 deck ship, 2 - 3 deck ship, 3 - 2 deck ship, 4 - 1 deck ship" << endl;
+        cout << "4 deck ship: " << one4deckship << endl;
+        cout << "3 deck ship: " << one3deckship << endl;
+        cout << "2 deck ship: " << one2deckship << endl;
+        cout << "1 deck ship: " << one1deckship << endl;
+        isCorrect = false;
+    }
     if (isCorrect) {
-        cout << ("Map is correct!") << endl;
+        cout << "Map is correct!" << endl;
     }
 }
 
 void gotOrNotGot(char map[N][N]) {
     int x, y;
+    
     while (true) {
         cout << "enter the coordinates of the target : " << endl;
         cin >> x;
         cin >> y;
-        x -=1;
-        y -=1;
+        if (x > 10 || y > 10) {
+            cout << "enter the coordinates x <= 10 or y <= 10" << endl;
+        }
+        x -= 1;
+        y -= 1;
         if (map[x][y] == '*') {
             cout << "Got" << endl;
             map[x][y] = '!';
@@ -117,14 +201,14 @@ void gotOrNotGot(char map[N][N]) {
                 cout << "You win!!!" << endl;
                 break;
             }
-        }
-        else {
+        }else{
             cout << "Not got" << endl;
             map[x][y] = '#';
             printMap(map);
         }
     }
 }
+
 int main()
 {
     char map[N][N];
